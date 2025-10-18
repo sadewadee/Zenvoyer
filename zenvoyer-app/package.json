@@ -1,0 +1,28 @@
+{
+  "name": "zenvoyer-monorepo",
+  "version": "1.0.0",
+  "description": "Zenvoyer - Professional Invoice Management Platform",
+  "private": true,
+  "workspaces": [
+    "apps/api",
+    "apps/web",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev --parallel",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "type-check": "turbo run type-check",
+    "api": "yarn workspace @zenvoyer/api",
+    "web": "yarn workspace @zenvoyer/web"
+  },
+  "devDependencies": {
+    "turbo": "^1.10.16",
+    "typescript": "^5.4.5"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}

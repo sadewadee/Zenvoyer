@@ -1,3 +1,30 @@
 /.claude
 /DEPLOYMENT-VPS-VULTR-GUIDE.md
 /PRD-ZENVOYER-FINAL-MASTER-V4.md
+*.md
+!README.md
+
+# Dependencies
+node_modules
+.DS_Store
+
+# Build outputs
+dist
+build
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Process IDs
+.backend.pid
+.frontend.pid
+
+# Logs
+logs/
+*.log
+
+# Docker volumes
+postgres_data/
+redis_data/
