@@ -3,7 +3,7 @@
  * Component untuk menampilkan notifications dari UI store
  */
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useUIStore, Notification } from '../../lib/store/ui';
 import { NotificationType } from '../../lib/constants/enums';
 import { cn } from '../../lib/utils/cn';

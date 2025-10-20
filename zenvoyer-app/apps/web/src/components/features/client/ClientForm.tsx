@@ -18,7 +18,7 @@ import { NotificationType } from '@/lib/constants/enums';
 import { Currency } from '@/lib/constants/enums';
 import { ROUTES } from '@/lib/constants';
 
-import { Button, FormField, LoadingSpinner } from '@/components/shared';
+import { Button, FormField } from '@/components/shared';
 
 interface ClientFormProps {
   clientId?: string;

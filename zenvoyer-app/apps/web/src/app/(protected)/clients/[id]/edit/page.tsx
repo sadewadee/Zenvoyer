@@ -5,14 +5,16 @@
 'use client';
 
 import React from 'react';
+import { use } from 'react';
 import { ClientForm } from '@/components/features/client';
 
 interface EditClientPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default function EditClientPage({ params }: EditClientPageProps) {
-  return <ClientForm clientId={params.id} />;
+  const { id } = use(params);
+  return <ClientForm clientId={id} />;
 }

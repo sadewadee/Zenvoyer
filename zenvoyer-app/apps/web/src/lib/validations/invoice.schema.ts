@@ -4,7 +4,7 @@
  */
 
 import { z } from 'zod';
-import { InvoiceStatus, PaymentMethod, Currency } from '../constants/enums';
+import { PaymentMethod, Currency } from '../constants/enums';
 
 // Invoice item schema
 export const invoiceItemSchema = z.object({
@@ -74,8 +74,38 @@ export const createInvoiceSchema = z
 
 export type CreateInvoiceInput = z.infer<typeof createInvoiceSchema>;
 
+// Base invoice schema without refinement (for partial updates)
+const baseInvoiceSchema = z.object({
+  clientId: z.string().uuid('Please select a valid client'),
+  invoiceDate: z.coerce.date().refine((date) => date <= new Date(), {
+    message: 'Invoice date cannot be in the future',
+  }),
+  dueDate: z.coerce.date(),
+  currency: z.nativeEnum(Currency).default(Currency.USD),
+  taxRate: z
+    .number()
+    .min(0, 'Tax rate cannot be negative')
+    .max(100, 'Tax rate cannot exceed 100%')
+    .optional()
+    .default(0),
+  discountRate: z
+    .number()
+    .min(0, 'Discount rate cannot be negative')
+    .max(100, 'Discount rate cannot exceed 100%')
+    .optional()
+    .default(0),
+  notes: z
+    .string()
+    .max(1000, 'Notes must be at most 1000 characters')
+    .optional()
+    .or(z.literal('')),
+  items: z
+    .array(invoiceItemSchema)
+    .min(1, 'Add at least one invoice item'),
+});
+
 // Update invoice schema (same as create but optional)
-export const updateInvoiceSchema = createInvoiceSchema.partial();
+export const updateInvoiceSchema = baseInvoiceSchema.partial();
 
 export type UpdateInvoiceInput = z.infer<typeof updateInvoiceSchema>;
 

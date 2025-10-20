@@ -32,7 +32,7 @@ export interface TopClient {
   totalAmount: number;
 }
 
-export interface Invoice {
+export interface DashboardInvoice {
   id: string;
   invoiceNumber: string;
   clientId: string;
@@ -52,8 +52,8 @@ export interface UserDashboardResponse {
   revenueChart: RevenueChartData[];
   statusChart: StatusChartData[];
   topClients: TopClient[];
-  recentInvoices: Invoice[];
-  overdueInvoices: Invoice[];
+  recentInvoices: DashboardInvoice[];
+  overdueInvoices: DashboardInvoice[];
 }
 
 export interface AdminDashboardResponse {

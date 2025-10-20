@@ -16,7 +16,7 @@ import {
 } from '@/lib/validations/invoice.schema';
 import { useApiMutation, useApi } from '@/lib/hooks/useApi';
 import { useInvoiceCalculation } from '@/lib/hooks/useInvoiceCalculation';
-import { invoiceApi, Invoice } from '@/lib/api/services/invoice';
+import { invoiceApi } from '@/lib/api/services/invoice';
 import { clientApi } from '@/lib/api/services/client';
 import { useUIStore } from '@/lib/store/ui';
 import { NotificationType } from '@/lib/constants/enums';
@@ -66,7 +66,7 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({ invoiceId }) => {
       currency: INVOICE_DEFAULTS.CURRENCY as any,
       taxRate: INVOICE_DEFAULTS.TAX_RATE,
       discountRate: INVOICE_DEFAULTS.DISCOUNT_RATE,
-      items: [{ description: '', quantity: 1, unitPrice: 0 }],
+      items: [{ description: '', quantity: 1, unitPrice: 0, discount: 0, tax: 0 }],
     },
   });
 
@@ -213,7 +213,7 @@ export const InvoiceForm: React.FC<InvoiceFormProps> = ({ invoiceId }) => {
               variant="secondary"
               size="sm"
               onClick={() =>
-                append({ description: '', quantity: 1, unitPrice: 0 })
+                append({ description: '', quantity: 1, unitPrice: 0, discount: 0, tax: 0 })
               }
             >
               + Add Item

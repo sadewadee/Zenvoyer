@@ -8,7 +8,7 @@ import { useAuthStore } from '../store/auth';
 import { authApi, UserProfile } from '../api/services/auth';
 import { setAuthToken, clearAuthToken } from '../api/client';
 import { TOKEN_KEY } from '../constants';
-import { isAuthError, getErrorMessage } from '../api/utils/error-handler';
+import { getErrorMessage } from '../api/utils/error-handler';
 
 export interface UseAuthOptions {
   onAuthError?: (error: unknown) => void;
@@ -19,7 +19,6 @@ export function useAuth(options?: UseAuthOptions) {
     user,
     isLoading,
     isAuthenticated,
-    login: storeLogin,
     logout: storeLogout,
     setUser,
     setLoading,
@@ -126,7 +125,7 @@ export function useAuth(options?: UseAuthOptions) {
    * Check permission
    */
   const hasPermission = useCallback(
-    (permission: string) => {
+    (_permission: string) => {
       // TODO: Implement permission checking based on user role/permissions
       return true;
     },

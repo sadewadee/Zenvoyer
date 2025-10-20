@@ -12,8 +12,6 @@ import { useAuth } from '@/lib/hooks/useAuth';
 import { useUIStore } from '@/lib/store/ui';
 import { ROUTES } from '@/lib/constants';
 
-import { Button } from '@/components/shared';
-
 /**
  * Navbar component
  */

@@ -168,31 +168,34 @@ export function pick<T, K extends keyof T>(obj: T, fields: K[]): Pick<T, K> {
 /**
  * Omit specific fields dari object
  */
-export function omit<T, K extends keyof T>(obj: T, fields: K[]): Omit<T, K> {
+export function omit<T extends Record<string, any>, K extends keyof T>(obj: T, fields: K[]): Omit<T, K> {
   const fieldSet = new Set(fields);
-  return Object.entries(obj).reduce(
-    (acc, [key, value]) => {
-      if (!fieldSet.has(key as K)) {
-        acc[key as Exclude<keyof T, K>] = value;
-      }
-      return acc;
-    },
-    {} as Omit<T, K>
-  );
+  const result: any = {};
+  
+  for (const [key, value] of Object.entries(obj)) {
+    if (!fieldSet.has(key as K)) {
+      result[key] = value;
+    }
+  }
+  
+  return result as Omit<T, K>;
 }
 
 /**
  * Flatten nested array
  */
 export function flatten<T>(array: (T | T[])[]): T[] {
-  return array.reduce((acc, item) => {
+  const result: T[] = [];
+  
+  for (const item of array) {
     if (Array.isArray(item)) {
-      acc.push(...item);
+      result.push(...item);
     } else {
-      acc.push(item);
+      result.push(item);
     }
-    return acc;
-  }, [] as T[]);
+  }
+  
+  return result;
 }
 
 /**

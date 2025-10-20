@@ -5,14 +5,16 @@
 'use client';
 
 import React from 'react';
+import { use } from 'react';
 import { InvoiceDetail } from '@/components/features/invoice';
 
 interface InvoicePageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default function InvoicePage({ params }: InvoicePageProps) {
-  return <InvoiceDetail invoiceId={params.id} />;
+  const { id } = use(params);
+  return <InvoiceDetail invoiceId={id} />;
 }

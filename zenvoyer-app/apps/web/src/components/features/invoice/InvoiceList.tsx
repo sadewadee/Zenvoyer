@@ -11,7 +11,7 @@ import { formatDistanceToNow } from 'date-fns';
 
 import { useApi } from '@/lib/hooks/useApi';
 import { invoiceApi } from '@/lib/api/services/invoice';
-import { ROUTES, INVOICE_DEFAULTS } from '@/lib/constants';
+import { ROUTES } from '@/lib/constants';
 import { InvoiceStatus } from '@/lib/constants/enums';
 
 import {

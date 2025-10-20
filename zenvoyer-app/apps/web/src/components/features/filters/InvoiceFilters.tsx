@@ -8,7 +8,6 @@
 import React from 'react';
 import { Button } from '@/components/shared';
 import { InvoiceStatus } from '@/lib/constants/enums';
-import { formatDateForInput } from '@/lib/utils/formatting';
 
 interface InvoiceFiltersProps {
   onFilterChange: (filters: InvoiceFiltersState) => void;

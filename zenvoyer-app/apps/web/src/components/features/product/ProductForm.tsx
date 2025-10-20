@@ -15,9 +15,8 @@ import { useApiMutation, useApi } from '@/lib/hooks/useApi';
 import { productApi } from '@/lib/api/services/product';
 import { useUIStore } from '@/lib/store/ui';
 import { NotificationType } from '@/lib/constants/enums';
-import { ROUTES } from '@/lib/constants';
 
-import { Button, FormField, LoadingSpinner } from '@/components/shared';
+import { Button, FormField } from '@/components/shared';
 
 interface ProductFormProps {
   productId?: string;

@@ -12,7 +12,6 @@ import { useApi, useApiMutation } from '@/lib/hooks/useApi';
 import { productApi } from '@/lib/api/services/product';
 import { useUIStore } from '@/lib/store/ui';
 import { NotificationType } from '@/lib/constants/enums';
-import { ROUTES } from '@/lib/constants';
 import { formatCurrency } from '@/lib/utils/formatting';
 
 import { DataTable, Button, LoadingSpinner, Modal } from '@/components/shared';

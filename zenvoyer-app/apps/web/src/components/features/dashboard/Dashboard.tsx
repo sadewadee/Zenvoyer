@@ -12,7 +12,6 @@ import { useApi } from '@/lib/hooks/useApi';
 import { dashboardApi } from '@/lib/api/services/dashboard';
 import { ROUTES } from '@/lib/constants';
 import { formatCurrency, formatDate } from '@/lib/utils/formatting';
-import { sum } from '@/lib/utils/data';
 
 import { LoadingSpinner, Button, StatusBadge } from '@/components/shared';
 import { DashboardMetrics } from './DashboardMetrics';

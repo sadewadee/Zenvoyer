@@ -97,7 +97,6 @@ export const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
   totalClients,
   invoiceChange,
   revenueChange,
-  conversionRate,
   loading,
 }) => {
   if (loading) {

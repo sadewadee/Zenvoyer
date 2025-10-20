@@ -102,7 +102,7 @@ function downloadFile(content: string, filename: string, mimeType: string): void
  * Export invoices to PDF (placeholder)
  * Note: Untuk production, gunakan library seperti jsPDF
  */
-export function exportInvoiceToPDF(invoiceId: string, filename: string = 'invoice.pdf'): void {
+export function exportInvoiceToPDF(_invoiceId: string, _filename: string = 'invoice.pdf'): void {
   // TODO: Implement PDF export menggunakan jsPDF atau library lain
   console.warn('PDF export belum diimplementasikan');
 }

@@ -5,7 +5,7 @@
 
 'use client';
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useUIStore } from '@/lib/store/ui';
@@ -35,12 +35,12 @@ export const ProfileSettings: React.FC = () => {
   /**
    * Handle form submission
    */
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (_data: any) => {
     try {
       setIsLoading(true);
 
       // TODO: Call API to update profile
-      // await userApi.updateProfile(data);
+      // await userApi.updateProfile(_data);
 
       addNotification({
         type: NotificationType.SUCCESS,

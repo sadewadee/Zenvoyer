@@ -5,7 +5,7 @@
 
 import { useMemo } from 'react';
 
-export interface InvoiceItem {
+export interface CalculationItem {
   quantity: number;
   unitPrice: number;
   discount?: number;
@@ -22,7 +22,7 @@ export interface CalculationResult {
 /**
  * Calculate invoice totals
  */
-function calculateTotals(items: InvoiceItem[]): CalculationResult {
+function calculateTotals(items: CalculationItem[]): CalculationResult {
   const subtotal = items.reduce(
     (sum, item) => sum + item.quantity * item.unitPrice,
     0
@@ -51,7 +51,7 @@ function calculateTotals(items: InvoiceItem[]): CalculationResult {
 /**
  * Hook untuk invoice calculation dengan memoization
  */
-export function useInvoiceCalculation(items: InvoiceItem[]) {
+export function useInvoiceCalculation(items: CalculationItem[]) {
   return useMemo(() => calculateTotals(items), [items]);
 }
 
