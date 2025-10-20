@@ -43,8 +43,23 @@ main() {
     echo "╚════════════════════════════════════════════════╝"
     echo -e "${NC}\n"
 
+    # Detect project structure
+    if [ -d "zenvoyer-app/apps/api" ]; then
+        API_DIR="zenvoyer-app/apps/api"
+        WEB_DIR="zenvoyer-app/apps/web"
+        MONOREPO_ROOT="zenvoyer-app"
+    elif [ -d "apps/api" ]; then
+        API_DIR="apps/api"
+        WEB_DIR="apps/web"
+        MONOREPO_ROOT="."
+    else
+        print_error "Cannot find application directories!"
+        print_info "Are you in the correct directory?"
+        exit 1
+    fi
+
     # Check if installation was done
-    if [ ! -f "zenvoyer-app/apps/api/node_modules/.package-lock.json" ] && [ ! -f "zenvoyer-app/apps/api/package-lock.json" ]; then
+    if [ ! -d "$MONOREPO_ROOT/node_modules" ] && [ ! -d "$API_DIR/node_modules" ]; then
         print_error "Dependencies not installed!"
         print_info "Please run ./install.sh first"
         exit 1
@@ -71,16 +86,16 @@ main() {
     # Check environment files
     print_info "Checking environment files..."
     
-    if [ ! -f "zenvoyer-app/apps/api/.env" ]; then
+    if [ ! -f "$API_DIR/.env" ]; then
         print_error "Backend .env file not found!"
         print_info "Please run ./install.sh first or copy .env.example to .env"
         exit 1
     fi
     print_success "Backend .env found"
 
-    if [ ! -f "zenvoyer-app/apps/web/.env.local" ]; then
+    if [ ! -f "$WEB_DIR/.env.local" ]; then
         print_warning "Frontend .env.local not found, creating default..."
-        cat > zenvoyer-app/apps/web/.env.local << 'EOF'
+        cat > "$WEB_DIR/.env.local" << 'EOF'
 NEXT_PUBLIC_API_URL=http://localhost:3001
 NEXT_PUBLIC_APP_NAME=Zenvoyer
 NEXT_PUBLIC_APP_URL=http://localhost:3000
@@ -128,24 +143,35 @@ start_full_stack() {
     print_info "Starting Full Stack..."
     echo ""
     
+    # Determine return path
+    if [ "$MONOREPO_ROOT" = "." ]; then
+        RETURN_PATH="../.."
+        LOG_PATH="../../logs"
+        PID_PATH="../.."
+    else
+        RETURN_PATH="../../.."
+        LOG_PATH="../../../logs"
+        PID_PATH="../../.."
+    fi
+    
     # Start backend in background
     print_info "Starting Backend..."
-    cd zenvoyer-app/apps/api
-    npm run start:dev > ../../../logs/backend.log 2>&1 &
+    cd "$API_DIR"
+    npm run start:dev > "$LOG_PATH/backend.log" 2>&1 &
     BACKEND_PID=$!
-    echo $BACKEND_PID > ../../../.backend.pid
-    cd ../../..
+    echo $BACKEND_PID > "$PID_PATH/.backend.pid"
+    cd "$RETURN_PATH"
     
     sleep 3
     print_success "Backend started (PID: $BACKEND_PID)"
     
     # Start frontend in background
     print_info "Starting Frontend..."
-    cd zenvoyer-app/apps/web
-    npm run dev > ../../../logs/frontend.log 2>&1 &
+    cd "$WEB_DIR"
+    npm run dev > "$LOG_PATH/frontend.log" 2>&1 &
     FRONTEND_PID=$!
-    echo $FRONTEND_PID > ../../../.frontend.pid
-    cd ../../..
+    echo $FRONTEND_PID > "$PID_PATH/.frontend.pid"
+    cd "$RETURN_PATH"
     
     sleep 3
     print_success "Frontend started (PID: $FRONTEND_PID)"
@@ -155,23 +181,28 @@ start_full_stack() {
 
 start_backend() {
     print_info "Starting Backend..."
-    cd zenvoyer-app/apps/api
     
     # Check if backend is already running
-    if [ -f "../../../.backend.pid" ]; then
-        OLD_PID=$(cat ../../../.backend.pid)
+    if [ -f ".backend.pid" ]; then
+        OLD_PID=$(cat .backend.pid)
         if ps -p $OLD_PID > /dev/null 2>&1; then
             print_warning "Backend is already running (PID: $OLD_PID)"
             print_info "Stop it first with: ./stop.sh"
-            cd ../../..
             exit 1
         fi
     fi
     
-    npm run start:dev > ../../../logs/backend.log 2>&1 &
+    cd "$API_DIR"
+    npm run start:dev > ../../logs/backend.log 2>&1 &
     BACKEND_PID=$!
-    echo $BACKEND_PID > ../../../.backend.pid
-    cd ../../..
+    
+    # Return to project root and save PID
+    if [ "$MONOREPO_ROOT" = "." ]; then
+        cd ../..
+    else
+        cd ../../..
+    fi
+    echo $BACKEND_PID > .backend.pid
     
     sleep 3
     print_success "Backend started (PID: $BACKEND_PID)"
@@ -181,23 +212,28 @@ start_backend() {
 
 start_frontend() {
     print_info "Starting Frontend..."
-    cd zenvoyer-app/apps/web
     
     # Check if frontend is already running
-    if [ -f "../../../.frontend.pid" ]; then
-        OLD_PID=$(cat ../../../.frontend.pid)
+    if [ -f ".frontend.pid" ]; then
+        OLD_PID=$(cat .frontend.pid)
         if ps -p $OLD_PID > /dev/null 2>&1; then
             print_warning "Frontend is already running (PID: $OLD_PID)"
             print_info "Stop it first with: ./stop.sh"
-            cd ../../..
             exit 1
         fi
     fi
     
-    npm run dev > ../../../logs/frontend.log 2>&1 &
+    cd "$WEB_DIR"
+    npm run dev > ../../logs/frontend.log 2>&1 &
     FRONTEND_PID=$!
-    echo $FRONTEND_PID > ../../../.frontend.pid
-    cd ../../..
+    
+    # Return to project root and save PID
+    if [ "$MONOREPO_ROOT" = "." ]; then
+        cd ../..
+    else
+        cd ../../..
+    fi
+    echo $FRONTEND_PID > .frontend.pid
     
     sleep 3
     print_success "Frontend started (PID: $FRONTEND_PID)"
@@ -222,11 +258,11 @@ start_dev_mode() {
         
         # Run backend in first pane
         tmux select-pane -t 0
-        tmux send-keys "cd zenvoyer-app/apps/api && npm run start:dev" C-m
+        tmux send-keys "cd $API_DIR && npm run start:dev" C-m
         
         # Run frontend in second pane
         tmux select-pane -t 1
-        tmux send-keys "cd zenvoyer-app/apps/web && npm run dev" C-m
+        tmux send-keys "cd $WEB_DIR && npm run dev" C-m
         
         # Attach to session
         print_success "Starting tmux session..."
@@ -240,16 +276,16 @@ start_dev_mode() {
         
         # Start backend
         if command_exists gnome-terminal; then
-            gnome-terminal -- bash -c "cd zenvoyer-app/apps/api && npm run start:dev; exec bash"
-            gnome-terminal -- bash -c "cd zenvoyer-app/apps/web && npm run dev; exec bash"
+            gnome-terminal -- bash -c "cd $API_DIR && npm run start:dev; exec bash"
+            gnome-terminal -- bash -c "cd $WEB_DIR && npm run dev; exec bash"
         elif command_exists xterm; then
-            xterm -e "cd zenvoyer-app/apps/api && npm run start:dev" &
-            xterm -e "cd zenvoyer-app/apps/web && npm run dev" &
+            xterm -e "cd $API_DIR && npm run start:dev" &
+            xterm -e "cd $WEB_DIR && npm run dev" &
         else
             print_error "No suitable terminal emulator found"
             print_info "Please run manually:"
-            echo "  Terminal 1: cd zenvoyer-app/apps/api && npm run start:dev"
-            echo "  Terminal 2: cd zenvoyer-app/apps/web && npm run dev"
+            echo "  Terminal 1: cd $API_DIR && npm run start:dev"
+            echo "  Terminal 2: cd $WEB_DIR && npm run dev"
         fi
     fi
 }

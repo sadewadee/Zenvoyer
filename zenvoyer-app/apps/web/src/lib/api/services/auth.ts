@@ -3,8 +3,8 @@
  * Centralized functions untuk auth-related API calls
  */
 
-import { get, post, patch } from './client';
-import { API_ENDPOINTS } from '../constants';
+import { get, post, patch } from '../client';
+import { API_ENDPOINTS } from '../../constants';
 
 export interface LoginPayload {
   email: string;

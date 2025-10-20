@@ -3,8 +3,8 @@
  * Reusable fungsi untuk error handling yang konsisten
  */
 
-import { AppError, ErrorType, ApiError } from '../../../types/error';
-import { NotificationType } from '../constants/enums';
+import { AppError, ErrorType } from '../../../types/error';
+import { NotificationType } from '../../constants/enums';
 
 /**
  * Convert error to user-friendly message
@@ -14,7 +14,7 @@ export function getErrorMessage(error: unknown): string {
     return error.message;
   }
 
-  if (error instanceof ApiError) {
+  if (error instanceof AppError) {
     switch (error.type) {
       case ErrorType.VALIDATION:
         return 'Please check your input and try again';
@@ -46,7 +46,7 @@ export function getErrorMessage(error: unknown): string {
  * Get error notification type based on error type
  */
 export function getErrorNotificationType(error: unknown): NotificationType {
-  if (error instanceof ApiError) {
+  if (error instanceof AppError) {
     switch (error.type) {
       case ErrorType.VALIDATION:
       case ErrorType.CONFLICT:
@@ -71,9 +71,9 @@ export function getErrorNotificationType(error: unknown): NotificationType {
 export function extractValidationErrors(error: unknown): Record<string, string> {
   const errors: Record<string, string> = {};
 
-  if (error instanceof ApiError) {
+  if (error instanceof AppError) {
     if (error.details && Array.isArray(error.details)) {
-      error.details.forEach((detail: any) => {
+      (error.details as any[]).forEach((detail: any) => {
         if (detail.field && detail.message) {
           errors[detail.field] = detail.message;
         }
@@ -88,7 +88,7 @@ export function extractValidationErrors(error: unknown): Record<string, string> 
  * Determine if error is retryable
  */
 export function isRetryableError(error: unknown): boolean {
-  if (error instanceof ApiError) {
+  if (error instanceof AppError) {
     switch (error.type) {
       case ErrorType.NETWORK_ERROR:
       case ErrorType.SERVER_ERROR:
@@ -126,7 +126,7 @@ export async function tryCatch<T>(
  * Get HTTP status code from error
  */
 export function getErrorStatusCode(error: unknown): number {
-  if (error instanceof ApiError) {
+  if (error instanceof AppError) {
     return error.statusCode;
   }
 
@@ -137,14 +137,14 @@ export function getErrorStatusCode(error: unknown): number {
  * Check if error is specific type
  */
 export function isErrorType(error: unknown, type: ErrorType): boolean {
-  return error instanceof ApiError && error.type === type;
+  return error instanceof AppError && error.type === type;
 }
 
 /**
  * Is auth error (401 atau 403)
  */
 export function isAuthError(error: unknown): boolean {
-  if (error instanceof ApiError) {
+  if (error instanceof AppError) {
     return (
       error.type === ErrorType.AUTHENTICATION ||
       error.type === ErrorType.AUTHORIZATION
@@ -158,7 +158,7 @@ export function isAuthError(error: unknown): boolean {
  * Is validation error (400 atau 422)
  */
 export function isValidationError(error: unknown): boolean {
-  if (error instanceof ApiError) {
+  if (error instanceof AppError) {
     return error.type === ErrorType.VALIDATION;
   }
 

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Between } from 'typeorm';
 import { Invoice } from '../../../database/entities/invoice.entity';
 
 @Injectable()
@@ -49,17 +49,10 @@ export class InvoiceNumberingService {
     tomorrow.setDate(tomorrow.getDate() + 1);
 
     const invoicestoday = await this.invoicesRepository.count({
-      where: [
-        {
-          userId,
-          createdAt: (qb) => {
-            return qb.where('created_at >= :start AND created_at < :end', {
-              start: today,
-              end: tomorrow,
-            });
-          },
-        },
-      ],
+      where: {
+        userId,
+        createdAt: Between(today, tomorrow),
+      },
     });
 
     return invoicestoday + 1;

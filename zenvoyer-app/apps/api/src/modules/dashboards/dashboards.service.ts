@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Invoice } from '../../../database/entities/invoice.entity';
-import { User } from '../../../database/entities/user.entity';
-import { Client } from '../../../database/entities/client.entity';
-import { AdminActivityLog } from '../../../database/entities/admin-activity-log.entity';
+import { Invoice } from '../../database/entities/invoice.entity';
+import { User } from '../../database/entities/user.entity';
+import { Client } from '../../database/entities/client.entity';
+import { AdminActivityLog } from '../../database/entities/admin-activity-log.entity';
 import {
   UserDashboardResponse,
   AdminDashboardResponse,
   SuperAdminDashboardResponse,
   DashboardStats,
   ChartData,
-} from '../dto/dashboard.dto';
+} from './dto/dashboard.dto';
 
 @Injectable()
 export class DashboardsService {

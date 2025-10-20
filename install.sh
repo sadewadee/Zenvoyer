@@ -99,55 +99,130 @@ main() {
     # Step 2: Install dependencies
     print_header "Step 2: Installing Dependencies"
     
-    print_info "Installing root dependencies..."
-    if npm install; then
-        print_success "Root dependencies installed"
+    print_info "Detecting project structure..."
+    
+    # Check if we're in a monorepo setup
+    if [ -f "zenvoyer-app/package.json" ]; then
+        print_success "Monorepo structure detected"
+        
+        print_info "Installing all dependencies (monorepo workspace)..."
+        cd zenvoyer-app
+        
+        # Try npm first, then yarn, then with legacy peer deps
+        if npm install 2>/dev/null; then
+            print_success "Dependencies installed with npm"
+        elif npm install --legacy-peer-deps 2>/dev/null; then
+            print_success "Dependencies installed with npm (legacy peer deps)"
+        elif yarn install 2>/dev/null; then
+            print_success "Dependencies installed with yarn"
+        else
+            print_warning "Standard installation failed, trying manual installation..."
+            
+            # Fallback: install in each workspace with legacy-peer-deps
+            cd apps/api
+            print_info "Installing backend dependencies..."
+            if npm install --legacy-peer-deps; then
+                print_success "Backend dependencies installed"
+            else
+                print_error "Backend dependencies installation failed"
+            fi
+            cd ../..
+            
+            cd apps/web
+            print_info "Installing frontend dependencies..."
+            if npm install --legacy-peer-deps; then
+                print_success "Frontend dependencies installed"
+            else
+                print_error "Frontend dependencies installation failed"
+            fi
+            cd ../..
+        fi
+        
+        cd ..
+        print_success "All dependencies installed"
+        
+    elif [ -f "package.json" ]; then
+        print_success "Standard structure detected"
+        
+        print_info "Installing dependencies..."
+        if npm install; then
+            print_success "Dependencies installed"
+        else
+            print_error "Failed to install dependencies"
+            exit 1
+        fi
     else
-        print_error "Failed to install root dependencies"
+        print_error "No package.json found!"
+        print_error "Are you in the correct directory?"
         exit 1
     fi
-
-    print_info "Installing backend dependencies..."
-    cd zenvoyer-app/apps/api
-    if npm install; then
-        print_success "Backend dependencies installed"
-    else
-        print_error "Failed to install backend dependencies"
-        exit 1
-    fi
-    cd ../../..
-
-    print_info "Installing frontend dependencies..."
-    cd zenvoyer-app/apps/web
-    if npm install; then
-        print_success "Frontend dependencies installed"
-    else
-        print_error "Failed to install frontend dependencies"
-        exit 1
-    fi
-    cd ../../..
 
     # Step 3: Setup environment files
     print_header "Step 3: Setting Up Environment Files"
     
+    # Detect API directory
+    if [ -d "zenvoyer-app/apps/api" ]; then
+        API_DIR="zenvoyer-app/apps/api"
+        WEB_DIR="zenvoyer-app/apps/web"
+    elif [ -d "apps/api" ]; then
+        API_DIR="apps/api"
+        WEB_DIR="apps/web"
+    else
+        print_error "Cannot find API directory!"
+        exit 1
+    fi
+    
     print_info "Setting up backend .env file..."
-    if [ -f "zenvoyer-app/apps/api/.env" ]; then
+    if [ -f "$API_DIR/.env" ]; then
         print_warning ".env file already exists, skipping..."
     else
-        if [ -f "zenvoyer-app/apps/api/.env.example" ]; then
-            cp zenvoyer-app/apps/api/.env.example zenvoyer-app/apps/api/.env
+        if [ -f "$API_DIR/.env.example" ]; then
+            cp "$API_DIR/.env.example" "$API_DIR/.env"
             print_success "Backend .env file created from .env.example"
-            print_warning "Please update zenvoyer-app/apps/api/.env with your configuration"
+            print_warning "Please update $API_DIR/.env with your configuration"
         else
-            print_error ".env.example not found!"
+            print_warning ".env.example not found, creating default .env..."
+            cat > "$API_DIR/.env" << 'EOF'
+# Database
+DATABASE_HOST=localhost
+DATABASE_PORT=5432
+DATABASE_USER=zenvoyer
+DATABASE_PASSWORD=zenvoyer_password_123
+DATABASE_NAME=zenvoyer_db
+
+# Redis
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_PASSWORD=
+
+# JWT
+JWT_SECRET=your_super_secret_jwt_key_change_in_production
+JWT_EXPIRATION=7d
+
+# Application
+PORT=3001
+NODE_ENV=development
+CORS_ORIGIN=http://localhost:3000
+
+# Email
+EMAIL_FROM=noreply@zenvoyer.com
+SENDGRID_API_KEY=
+
+# Payment Gateways
+MIDTRANS_SERVER_KEY=
+XENDIT_API_KEY=
+STRIPE_SECRET_KEY=
+PAYPAL_SECRET_KEY=
+EOF
+            print_success "Default .env file created"
         fi
     fi
 
     print_info "Setting up frontend .env file..."
-    if [ -f "zenvoyer-app/apps/web/.env.local" ]; then
+    if [ -f "$WEB_DIR/.env.local" ]; then
         print_warning ".env.local file already exists, skipping..."
     else
-        cat > zenvoyer-app/apps/web/.env.local << 'EOF'
+        cat > "$WEB_DIR/.env.local" << 'EOF'
 # Frontend Environment Variables
 NEXT_PUBLIC_API_URL=http://localhost:3001
 NEXT_PUBLIC_APP_NAME=Zenvoyer
@@ -187,14 +262,23 @@ EOF
             
             if [[ "$RUN_MIGRATIONS" =~ ^[Yy]$ ]]; then
                 print_info "Running database migrations..."
-                cd zenvoyer-app/apps/api
-                if npm run migration:run 2>/dev/null; then
+                
+                # Find API directory
+                if [ -d "zenvoyer-app/apps/api" ]; then
+                    cd zenvoyer-app/apps/api
+                    RETURN_DIR="../../.."
+                elif [ -d "apps/api" ]; then
+                    cd apps/api
+                    RETURN_DIR="../.."
+                fi
+                
+                if npm run migration:run 2>/dev/null || npm run typeorm migration:run 2>/dev/null; then
                     print_success "Database migrations completed"
                 else
                     print_warning "Migration command not found or failed"
                     print_info "You may need to set up migrations manually"
                 fi
-                cd ../../..
+                cd "$RETURN_DIR"
             fi
         else
             print_warning "Skipping Docker setup"

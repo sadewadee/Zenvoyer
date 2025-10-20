@@ -4,7 +4,7 @@
  */
 
 import { useQuery, useMutation, UseQueryOptions, UseMutationOptions } from '@tanstack/react-query';
-import { ApiError, isApiError } from '../../../types/error';
+import { ApiError, isApiError } from '../../types/error';
 import { getErrorMessage } from '../api/utils/error-handler';
 
 /**

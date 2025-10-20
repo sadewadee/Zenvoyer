@@ -4,8 +4,8 @@
  */
 
 import React from 'react';
-import { INVOICE_STATUS_CONFIG, PAYMENT_METHOD_CONFIG } from '../../constants/enums';
-import { cn } from '../../utils/cn';
+import { INVOICE_STATUS_CONFIG, PAYMENT_METHOD_CONFIG } from '../../lib/constants/enums';
+import { cn } from '../../lib/utils/cn';
 
 interface StatusBadgeProps {
   status: string;

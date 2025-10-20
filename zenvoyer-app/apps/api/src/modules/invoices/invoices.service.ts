@@ -11,16 +11,16 @@ import {
   InvoiceItem,
   Payment,
   InvoiceStatus,
-} from '../../../database/entities/invoice.entity';
-import { Client } from '../../../database/entities/client.entity';
+} from '../../database/entities/invoice.entity';
+import { Client } from '../../database/entities/client.entity';
 import {
   CreateInvoiceDto,
   UpdateInvoiceDto,
   RecordPaymentDto,
   UpdateInvoiceStatusDto,
-} from '../dto/invoice.dto';
-import { InvoiceCalculationService } from './invoice-calculation.service';
-import { InvoiceNumberingService } from './invoice-numbering.service';
+} from './dto/invoice.dto';
+import { InvoiceCalculationService } from './services/invoice-calculation.service';
+import { InvoiceNumberingService } from './services/invoice-numbering.service';
 
 @Injectable()
 export class InvoicesService {

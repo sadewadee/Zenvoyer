@@ -18,6 +18,10 @@ export class RegisterDto {
   password: string;
 
   @IsString()
+  @MinLength(6)
+  confirmPassword: string;
+
+  @IsString()
   firstName: string;
 
   @IsString()

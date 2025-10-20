@@ -1,3 +1,3 @@
-export { InvoicesService } from './invoices.service';
-export { InvoiceCalculationService } from './services/invoice-calculation.service';
-export { InvoiceNumberingService } from './services/invoice-numbering.service';
+export { InvoicesService } from '../invoices.service';
+export { InvoiceCalculationService } from './invoice-calculation.service';
+export { InvoiceNumberingService } from './invoice-numbering.service';

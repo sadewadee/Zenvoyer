@@ -5,7 +5,7 @@
 
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosError } from 'axios';
 import { API_BASE_URL, API_TIMEOUT, TOKEN_KEY } from '../constants';
-import { ApiError, ErrorType, isApiError } from '../../../types/error';
+import { AppError, ErrorType, isApiError } from '../../types/error';
 
 // Axios instance
 let axiosInstance: AxiosInstance;
@@ -64,7 +64,7 @@ export const initializeApiClient = () => {
       const message = (error.response?.data as any)?.message || error.message || 'An error occurred';
       const details = (error.response?.data as any)?.details;
 
-      const appError = new ApiError(
+      const appError = new AppError(
         errorType,
         message,
         statusCode,
@@ -126,7 +126,7 @@ export async function apiClient<T = any>(
     // Handle network errors
     if (error instanceof Error) {
       if (error.message === 'Network Error' || error.message.includes('ECONNABORTED')) {
-        throw new ApiError(
+        throw new AppError(
           ErrorType.NETWORK_ERROR,
           'Network connection failed. Please check your internet connection.',
           0
@@ -135,7 +135,7 @@ export async function apiClient<T = any>(
     }
 
     // Fallback for unknown errors
-    throw new ApiError(
+    throw new AppError(
       ErrorType.UNKNOWN_ERROR,
       error instanceof Error ? error.message : 'An unexpected error occurred',
       500
@@ -200,9 +200,13 @@ export async function del<T = any>(
  * Set auth token
  */
 export function setAuthToken(token: string | null) {
+  initializeApiClient();
   if (token) {
-    const client = getClient();
-    client.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    localStorage.setItem(TOKEN_KEY, token);
+  } else {
+    delete axiosInstance.defaults.headers.common['Authorization'];
+    localStorage.removeItem(TOKEN_KEY);
   }
 }
 
@@ -210,8 +214,9 @@ export function setAuthToken(token: string | null) {
  * Clear auth token
  */
 export function clearAuthToken() {
-  const client = getClient();
-  delete client.defaults.headers.common['Authorization'];
+  initializeApiClient();
+  delete axiosInstance.defaults.headers.common['Authorization'];
+  localStorage.removeItem(TOKEN_KEY);
 }
 
 export default {

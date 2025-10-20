@@ -3,6 +3,7 @@
 /PRD-ZENVOYER-FINAL-MASTER-V4.md
 *.md
 !README.md
+*.sh
 
 # Dependencies
 node_modules
