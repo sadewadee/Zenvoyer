@@ -6,6 +6,7 @@
 'use client';
 
 import React from 'react';
+import { FileText, DollarSign, Clock, Users } from 'lucide-react';
 import { formatCurrency, formatNumber } from '@/lib/utils/formatting';
 
 interface MetricCardProps {
@@ -14,7 +15,7 @@ interface MetricCardProps {
   change?: number;
   changePercent?: number;
   trend?: 'up' | 'down';
-  icon?: string;
+  icon?: React.ReactNode;
   color?: 'blue' | 'green' | 'red' | 'yellow';
 }
 
@@ -67,7 +68,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
         </div>
 
         {icon && (
-          <div className={`${bgColor} ${textColor} rounded-lg p-3 text-2xl`}>
+          <div className={`${bgColor} ${textColor} rounded-lg p-3`}>
             {icon}
           </div>
         )}
@@ -117,7 +118,7 @@ export const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
         change={invoiceChange}
         changePercent={invoiceChange ? Math.round((invoiceChange / totalInvoices) * 100) : 0}
         trend={invoiceChange && invoiceChange > 0 ? 'up' : 'down'}
-        icon="📄"
+        icon={<FileText className="w-6 h-6" />}
         color="blue"
       />
 
@@ -127,21 +128,21 @@ export const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
         change={revenueChange}
         changePercent={revenueChange ? Math.round((revenueChange / totalRevenue) * 100) : 0}
         trend={revenueChange && revenueChange > 0 ? 'up' : 'down'}
-        icon="💰"
+        icon={<DollarSign className="w-6 h-6" />}
         color="green"
       />
 
       <MetricCard
         title="Unpaid Amount"
         value={formatCurrency(totalUnpaid)}
-        icon="⏳"
+        icon={<Clock className="w-6 h-6" />}
         color="red"
       />
 
       <MetricCard
         title="Total Clients"
         value={formatNumber(totalClients)}
-        icon="👥"
+        icon={<Users className="w-6 h-6" />}
         color="yellow"
       />
     </div>

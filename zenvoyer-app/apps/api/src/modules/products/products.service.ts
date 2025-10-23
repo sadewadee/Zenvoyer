@@ -30,6 +30,11 @@ export class ProductsService {
     return product;
   }
 
+  // Alias for import controller
+  async create(userId: string, createProductDto: CreateProductDto) {
+    return this.createProduct(userId, createProductDto);
+  }
+
   async createProduct(userId: string, createProductDto: CreateProductDto) {
     const product = this.productsRepository.create({
       ...createProductDto,

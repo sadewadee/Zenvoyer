@@ -8,10 +8,12 @@ import {
   Param,
   UseGuards,
   Req,
+  ForbiddenException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ClientsService } from './clients.service';
 import { CreateClientDto, UpdateClientDto } from './dto/client.dto';
+import { LimitGuard } from '../../common/guards/limit.guard';
 
 @Controller('clients')
 @UseGuards(AuthGuard('jwt'))
@@ -29,7 +31,15 @@ export class ClientsController {
   }
 
   @Post()
+  @UseGuards(LimitGuard)
   async createClient(@Req() request: any, @Body() createClientDto: CreateClientDto) {
+    // Check free plan limit: max 10 clients
+    if (request.user.subscriptionPlan === 'free') {
+      const count = await this.clientsService.getAllClients(request.user.id);
+      if (count.length >= 10) {
+        throw new ForbiddenException('Free plan limit: max 10 clients. Upgrade to Pro for unlimited.');
+      }
+    }
     return this.clientsService.createClient(request.user.id, createClientDto);
   }
 

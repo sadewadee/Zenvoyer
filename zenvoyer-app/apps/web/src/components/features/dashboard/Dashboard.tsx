@@ -64,10 +64,10 @@ export const Dashboard: React.FC = () => {
     percentage: item.percentage,
   })) || [];
 
-  const revenueData = revenueChart?.map((item) => ({
-    label: item.label.slice(-2), // Get last 2 digits of month
-    value: item.value,
-  })) || [];
+  const revenueData = Array.isArray(revenueChart) ? revenueChart.map((item) => ({
+    label: item.label?.slice?.(-2) || item.label || '', // Get last 2 digits of month
+    value: item.value || 0,
+  })) : [];
 
   const topClientsData = topClients?.map((client) => ({
     label: client.name,
@@ -199,7 +199,7 @@ export const Dashboard: React.FC = () => {
               ))
             ) : (
               <div className="px-6 py-8 text-center text-gray-600">
-                No overdue invoices - Great job! 🎉
+                No overdue invoices
               </div>
             )}
           </div>
@@ -212,22 +212,22 @@ export const Dashboard: React.FC = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <Link href={ROUTES.INVOICE_CREATE}>
             <Button variant="secondary" fullWidth>
-              📄 New Invoice
+              New Invoice
             </Button>
           </Link>
           <Link href={ROUTES.CLIENT_CREATE}>
             <Button variant="secondary" fullWidth>
-              👥 New Client
+              New Client
             </Button>
           </Link>
           <Link href={ROUTES.INVOICES}>
             <Button variant="secondary" fullWidth>
-              📋 View All Invoices
+              View All Invoices
             </Button>
           </Link>
           <Link href={ROUTES.CLIENTS}>
             <Button variant="secondary" fullWidth>
-              👤 View All Clients
+              View All Clients
             </Button>
           </Link>
         </div>

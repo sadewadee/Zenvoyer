@@ -8,10 +8,12 @@ import {
   Param,
   UseGuards,
   Req,
+  ForbiddenException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ProductsService } from './products.service';
 import { CreateProductDto, UpdateProductDto } from './dto/product.dto';
+import { LimitGuard } from '../../common/guards/limit.guard';
 
 @Controller('products')
 @UseGuards(AuthGuard('jwt'))
@@ -29,7 +31,15 @@ export class ProductsController {
   }
 
   @Post()
+  @UseGuards(LimitGuard)
   async createProduct(@Req() request: any, @Body() createProductDto: CreateProductDto) {
+    // Check free plan limit: max 10 products
+    if (request.user.subscriptionPlan === 'free') {
+      const count = await this.productsService.getAllProducts(request.user.id);
+      if (count.length >= 10) {
+        throw new ForbiddenException('Free plan limit: max 10 products. Upgrade to Pro for unlimited.');
+      }
+    }
     return this.productsService.createProduct(request.user.id, createProductDto);
   }
 

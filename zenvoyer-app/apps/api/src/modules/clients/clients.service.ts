@@ -30,6 +30,11 @@ export class ClientsService {
     return client;
   }
 
+  // Alias for import controller
+  async create(userId: string, createClientDto: CreateClientDto) {
+    return this.createClient(userId, createClientDto);
+  }
+
   async createClient(userId: string, createClientDto: CreateClientDto) {
     const client = this.clientsRepository.create({
       ...createClientDto,

@@ -85,6 +85,36 @@
       "namedRegex": "^/_not\\-found(?:/)?$"
     },
     {
+      "page": "/admin",
+      "regex": "^/admin(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin(?:/)?$"
+    },
+    {
+      "page": "/admin/activity-logs",
+      "regex": "^/admin/activity\\-logs(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/activity\\-logs(?:/)?$"
+    },
+    {
+      "page": "/admin/settings",
+      "regex": "^/admin/settings(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/settings(?:/)?$"
+    },
+    {
+      "page": "/admin/support-tickets",
+      "regex": "^/admin/support\\-tickets(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/support\\-tickets(?:/)?$"
+    },
+    {
+      "page": "/admin/users",
+      "regex": "^/admin/users(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/users(?:/)?$"
+    },
+    {
       "page": "/clients",
       "regex": "^/clients(?:/)?$",
       "routeKeys": {},
@@ -101,6 +131,12 @@
       "regex": "^/dashboard(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/dashboard(?:/)?$"
+    },
+    {
+      "page": "/forgot-password",
+      "regex": "^/forgot\\-password(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/forgot\\-password(?:/)?$"
     },
     {
       "page": "/invoices",
@@ -139,10 +175,70 @@
       "namedRegex": "^/register(?:/)?$"
     },
     {
+      "page": "/reports",
+      "regex": "^/reports(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/reports(?:/)?$"
+    },
+    {
+      "page": "/reset-password",
+      "regex": "^/reset\\-password(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/reset\\-password(?:/)?$"
+    },
+    {
       "page": "/settings",
       "regex": "^/settings(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/settings(?:/)?$"
+    },
+    {
+      "page": "/settings/payments",
+      "regex": "^/settings/payments(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/settings/payments(?:/)?$"
+    },
+    {
+      "page": "/super-admin",
+      "regex": "^/super\\-admin(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/super\\-admin(?:/)?$"
+    },
+    {
+      "page": "/super-admin/activity-logs",
+      "regex": "^/super\\-admin/activity\\-logs(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/super\\-admin/activity\\-logs(?:/)?$"
+    },
+    {
+      "page": "/super-admin/admins",
+      "regex": "^/super\\-admin/admins(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/super\\-admin/admins(?:/)?$"
+    },
+    {
+      "page": "/super-admin/settings",
+      "regex": "^/super\\-admin/settings(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/super\\-admin/settings(?:/)?$"
+    },
+    {
+      "page": "/super-admin/statistics",
+      "regex": "^/super\\-admin/statistics(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/super\\-admin/statistics(?:/)?$"
+    },
+    {
+      "page": "/super-admin/users",
+      "regex": "^/super\\-admin/users(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/super\\-admin/users(?:/)?$"
+    },
+    {
+      "page": "/verify-email",
+      "regex": "^/verify\\-email(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/verify\\-email(?:/)?$"
     }
   ],
   "dataRoutes": [],

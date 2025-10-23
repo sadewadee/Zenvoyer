@@ -46,8 +46,8 @@ export class UsersController {
     return this.usersService.acceptInvitation(acceptInvitationDto);
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Put('sub-users/:subUserId/permissions')
+  @UseGuards(AuthGuard('jwt'))
   async updateSubUserPermissions(
     @Req() request: any,
     @Param('subUserId') subUserId: string,
@@ -60,8 +60,8 @@ export class UsersController {
     );
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Delete('sub-users/:subUserId')
+  @UseGuards(AuthGuard('jwt'))
   async removeSubUser(@Req() request: any, @Param('subUserId') subUserId: string) {
     return this.usersService.removeSubUser(request.user.id, subUserId);
   }

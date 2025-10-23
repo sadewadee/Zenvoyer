@@ -1,10 +1,11 @@
-import { Injectable, UnauthorizedException, BadRequestException, ConflictException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, BadRequestException, ConflictException, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import * as crypto from 'crypto';
 import { User, UserRole } from '../database/entities/user.entity';
-import { LoginDto, RegisterDto, ChangePasswordDto, AuthResponseDto } from './dto/auth.dto';
+import { LoginDto, RegisterDto, ChangePasswordDto, ForgotPasswordDto, ResetPasswordDto, VerifyEmailDto, AuthResponseDto } from './dto/auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -122,6 +123,113 @@ export class AuthService {
       role: user.role,
       subscriptionPlan: user.subscriptionPlan,
       subscriptionActive: user.subscriptionActive,
+    };
+  }
+
+  async forgotPassword(forgotPasswordDto: ForgotPasswordDto): Promise<{ message: string; token?: string }> {
+    const { email } = forgotPasswordDto;
+
+    const user = await this.usersRepository.findOne({ where: { email } });
+    if (!user) {
+      // Don't reveal if email exists for security
+      return { message: 'If email exists, password reset link has been sent' };
+    }
+
+    // Generate reset token
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+
+    // Set token and expiration (1 hour)
+    user.passwordResetToken = hashedToken;
+    user.passwordResetExpires = new Date(Date.now() + 3600000); // 1 hour
+    await this.usersRepository.save(user);
+
+    // TODO: Send email with reset link
+    // In development, return token for testing
+    const isDevelopment = process.env.NODE_ENV === 'development';
+    
+    return {
+      message: 'If email exists, password reset link has been sent',
+      ...(isDevelopment && { token: resetToken }), // Only in dev
+    };
+  }
+
+  async resetPassword(resetPasswordDto: ResetPasswordDto): Promise<{ message: string }> {
+    const { token, newPassword, confirmPassword } = resetPasswordDto;
+
+    if (newPassword !== confirmPassword) {
+      throw new BadRequestException('Passwords do not match');
+    }
+
+    // Hash the token to match database
+    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+
+    const user = await this.usersRepository.findOne({
+      where: { passwordResetToken: hashedToken },
+    });
+
+    if (!user || !user.passwordResetExpires) {
+      throw new BadRequestException('Invalid or expired reset token');
+    }
+
+    // Check if token is expired
+    if (user.passwordResetExpires < new Date()) {
+      throw new BadRequestException('Reset token has expired');
+    }
+
+    // Update password and clear reset token
+    user.password = await bcrypt.hash(newPassword, 10);
+    user.passwordResetToken = null;
+    user.passwordResetExpires = null;
+    await this.usersRepository.save(user);
+
+    return { message: 'Password has been reset successfully' };
+  }
+
+  async verifyEmail(verifyEmailDto: VerifyEmailDto): Promise<{ message: string }> {
+    const { token } = verifyEmailDto;
+
+    const user = await this.usersRepository.findOne({
+      where: { emailVerificationToken: token },
+    });
+
+    if (!user) {
+      throw new BadRequestException('Invalid verification token');
+    }
+
+    if (user.emailVerified) {
+      return { message: 'Email already verified' };
+    }
+
+    user.emailVerified = true;
+    user.emailVerificationToken = null;
+    await this.usersRepository.save(user);
+
+    return { message: 'Email verified successfully' };
+  }
+
+  async resendVerificationEmail(userId: string): Promise<{ message: string; token?: string }> {
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
+    
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (user.emailVerified) {
+      throw new BadRequestException('Email already verified');
+    }
+
+    // Generate new verification token
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    user.emailVerificationToken = verificationToken;
+    await this.usersRepository.save(user);
+
+    // TODO: Send verification email
+    const isDevelopment = process.env.NODE_ENV === 'development';
+
+    return {
+      message: 'Verification email sent',
+      ...(isDevelopment && { token: verificationToken }), // Only in dev
     };
   }
 

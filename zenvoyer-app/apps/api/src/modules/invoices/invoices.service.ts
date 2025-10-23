@@ -13,6 +13,7 @@ import {
   InvoiceStatus,
 } from '../../database/entities/invoice.entity';
 import { Client } from '../../database/entities/client.entity';
+import { PaginationDto, createPaginatedResult } from '../../common/dto/pagination.dto';
 import {
   CreateInvoiceDto,
   UpdateInvoiceDto,
@@ -38,9 +39,11 @@ export class InvoicesService {
   ) {}
 
   /**
-   * Get all invoices for a user
+   * Get all invoices for a user with pagination
    */
-  async getAllInvoices(userId: string, filters?: any) {
+  async getAllInvoices(userId: string, paginationDto: PaginationDto, filters?: any) {
+    const { page, limit, skip } = paginationDto;
+
     const query = this.invoicesRepository
       .createQueryBuilder('invoice')
       .where('invoice.userId = :userId', { userId })
@@ -67,7 +70,27 @@ export class InvoicesService {
       query.andWhere('invoice.invoiceDate <= :dateTo', { dateTo: filters.dateTo });
     }
 
-    return query.getMany();
+    // Search by invoice number or client name
+    if (filters?.search) {
+      query.andWhere(
+        '(invoice.invoiceNumber ILIKE :search OR client.name ILIKE :search)',
+        { search: `%${filters.search}%` },
+      );
+    }
+
+    // Amount filters
+    if (filters?.minAmount) {
+      query.andWhere('invoice.totalAmount >= :minAmount', { minAmount: filters.minAmount });
+    }
+
+    if (filters?.maxAmount) {
+      query.andWhere('invoice.totalAmount <= :maxAmount', { maxAmount: filters.maxAmount });
+    }
+
+    // Apply pagination
+    const [data, total] = await query.take(limit).skip(skip).getManyAndCount();
+
+    return createPaginatedResult(data, total, page, limit);
   }
 
   /**

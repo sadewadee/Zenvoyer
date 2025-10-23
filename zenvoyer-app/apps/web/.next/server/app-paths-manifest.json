@@ -1,18 +1,7 @@
 {
-  "/_not-found/page": "app/_not-found/page.js",
-  "/page": "app/page.js",
-  "/(protected)/clients/[id]/edit/page": "app/(protected)/clients/[id]/edit/page.js",
-  "/(protected)/clients/page": "app/(protected)/clients/page.js",
-  "/(protected)/clients/create/page": "app/(protected)/clients/create/page.js",
   "/(protected)/dashboard/page": "app/(protected)/dashboard/page.js",
-  "/(protected)/invoices/create/page": "app/(protected)/invoices/create/page.js",
-  "/(protected)/invoices/[id]/edit/page": "app/(protected)/invoices/[id]/edit/page.js",
-  "/(protected)/invoices/page": "app/(protected)/invoices/page.js",
-  "/(protected)/invoices/[id]/page": "app/(protected)/invoices/[id]/page.js",
-  "/(protected)/products/create/page": "app/(protected)/products/create/page.js",
-  "/(protected)/products/[id]/edit/page": "app/(protected)/products/[id]/edit/page.js",
-  "/(protected)/settings/page": "app/(protected)/settings/page.js",
-  "/(protected)/products/page": "app/(protected)/products/page.js",
   "/(auth)/login/page": "app/(auth)/login/page.js",
-  "/(auth)/register/page": "app/(auth)/register/page.js"
+  "/(protected)/invoices/page": "app/(protected)/invoices/page.js",
+  "/(protected)/settings/page": "app/(protected)/settings/page.js",
+  "/(protected)/super-admin/page": "app/(protected)/super-admin/page.js"
 }

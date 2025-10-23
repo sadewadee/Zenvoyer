@@ -1,6 +1,6 @@
 /**
  * Login Form Component
- * Form untuk login dengan validation dan error handling
+ * Professional login form with validation and error handling
  */
 
 'use client';
@@ -10,6 +10,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Mail, Lock, LogIn, ArrowRight, Shield } from 'lucide-react';
 
 import { loginSchema, type LoginInput } from '@/lib/validations/auth.schema';
 import { useAuth } from '@/lib/hooks/useAuth';
@@ -69,17 +70,22 @@ export const LoginForm: React.FC = () => {
 
   return (
     <div className="w-full max-w-md mx-auto">
-      <div className="bg-white rounded-lg shadow-md p-6 md:p-8">
+      <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 md:p-10">
         {/* Header */}
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
-          Welcome Back
-        </h1>
-        <p className="text-gray-600 mb-6">
-          Sign in to your Zenvoyer account
-        </p>
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl mb-4 shadow-lg shadow-blue-500/30">
+            <Shield className="w-8 h-8 text-white" />
+          </div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Welcome Back
+          </h1>
+          <p className="text-gray-500">
+            Sign in to your Zenvoyer account
+          </p>
+        </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           {/* Email field */}
           <FormField
             {...register('email')}
@@ -87,6 +93,7 @@ export const LoginForm: React.FC = () => {
             label="Email Address"
             placeholder="you@example.com"
             error={errors.email}
+            icon={<Mail className="w-5 h-5 text-gray-400" />}
             required
           />
 
@@ -97,6 +104,7 @@ export const LoginForm: React.FC = () => {
             label="Password"
             placeholder="••••••••"
             error={errors.password}
+            icon={<Lock className="w-5 h-5 text-gray-400" />}
             required
           />
 
@@ -104,9 +112,10 @@ export const LoginForm: React.FC = () => {
           <div className="flex justify-end">
             <Link
               href="/forgot-password"
-              className="text-sm text-blue-600 hover:text-blue-700 transition-colors"
+              className="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors inline-flex items-center gap-1"
             >
               Forgot password?
+              <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
 
@@ -116,21 +125,26 @@ export const LoginForm: React.FC = () => {
             fullWidth
             loading={isLoading}
             disabled={isLoading}
+            icon={<LogIn className="w-5 h-5" />}
+            className="mt-6 h-12 text-base font-semibold"
           >
             Sign In
           </Button>
         </form>
 
         {/* Footer */}
-        <p className="text-center text-gray-600 text-sm mt-6">
-          Don't have an account?{' '}
-          <Link
-            href={ROUTES.REGISTER}
-            className="text-blue-600 hover:text-blue-700 font-medium transition-colors"
-          >
-            Create one
-          </Link>
-        </p>
+        <div className="mt-8 text-center">
+          <p className="text-sm text-gray-600">
+            Don't have an account?{' '}
+            <Link
+              href={ROUTES.REGISTER}
+              className="font-semibold text-blue-600 hover:text-blue-700 transition-colors inline-flex items-center gap-1"
+            >
+              Create one
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

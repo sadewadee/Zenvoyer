@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BullModule } from '@nestjs/bull';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 // Modules
 import { AuthModule } from './auth/auth.module';
@@ -14,7 +15,8 @@ import { ProductsModule } from './modules/products/products.module';
 import { InvoicesModule } from './modules/invoices/invoices.module';
 import { PaymentsModule } from './modules/payments/payments.module';
 import { DashboardsModule } from './modules/dashboards/dashboards.module';
-import { NotificationsModule } from './modules/notifications/notifications.module';
+// import { NotificationsModule } from './modules/notifications/notifications.module';
+// import { ReportsModule } from './modules/reports/reports.module';
 
 @Module({
   imports: [
@@ -22,6 +24,10 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
       isGlobal: true,
       envFilePath: '.env',
     }),
+    ThrottlerModule.forRoot([{
+      ttl: 60000, // 60 seconds
+      limit: 10, // 10 requests per minute
+    }]),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -34,8 +40,8 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
         database: configService.get('DATABASE_NAME'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         migrations: [__dirname + '/database/migrations/**/*{.ts,.js}'],
-        migrationsRun: false,
-        synchronize: false,
+        migrationsRun: configService.get('NODE_ENV') === 'development', // Auto-run in dev
+        synchronize: false, // Never use synchronize in production
         logging: configService.get('NODE_ENV') === 'development',
         ssl:
           configService.get('NODE_ENV') === 'production'
@@ -65,7 +71,8 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
     InvoicesModule,
     PaymentsModule,
     DashboardsModule,
-    NotificationsModule,
+    // NotificationsModule, // Temporarily disabled due to dependency issues
+    // ReportsModule, // Temporarily disabled due to dependency issues
   ],
   controllers: [],
   providers: [],
